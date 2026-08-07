@@ -83,12 +83,12 @@ app.get('/books', isLoggedIn, (req, res) => {
         : `SELECT * FROM Books`;
     const params = search ? [`%${search}%`, `%${search}%`, `%${search}%`] : [];
     db.all(query, params, (err, rows) => {
-        res.render('books', { books: rows, search });
+        res.render('books', { books: rows, search, librarian: req.session.librarian });
     });
 });
 
 app.get('/books/add', isLoggedIn, (req, res) => {
-    res.render('addBook', { error: null });
+    res.render('addBook', { error: null, librarian: req.session.librarian });
 });
 
 app.post('/books/add', isLoggedIn, (req, res) => {
@@ -100,7 +100,7 @@ app.post('/books/add', isLoggedIn, (req, res) => {
             if (!err) {
                 res.redirect('/books');
             } else {
-                res.render('addBook', { error: 'Failed to add book. Please try again.' });
+                res.render('addBook', { error: 'Failed to add book. Please try again.', librarian: req.session.librarian });
             }
         }
     );
@@ -109,7 +109,7 @@ app.post('/books/add', isLoggedIn, (req, res) => {
 app.get('/books/edit/:id', isLoggedIn, (req, res) => {
     db.get(`SELECT * FROM Books WHERE id=?`, [req.params.id], (err, book) => {
         if (!book) return res.redirect('/books');
-        res.render('editBook', { book, error: null });
+        res.render('editBook', { book, error: null, librarian: req.session.librarian });
     });
 });
 
@@ -123,7 +123,7 @@ app.post('/books/edit/:id', isLoggedIn, (req, res) => {
                 res.redirect('/books');
             } else {
                 db.get(`SELECT * FROM Books WHERE id=?`, [req.params.id], (err2, book) => {
-                    res.render('editBook', { book, error: 'Update failed. Try again.' });
+                    res.render('editBook', { book, error: 'Update failed. Try again.', librarian: req.session.librarian });
                 });
             }
         }
@@ -144,12 +144,12 @@ app.get('/students', isLoggedIn, (req, res) => {
         : `SELECT * FROM Students`;
     const params = search ? [`%${search}%`, `%${search}%`, `%${search}%`] : [];
     db.all(query, params, (err, rows) => {
-        res.render('students', { students: rows, search });
+        res.render('students', { students: rows, search, librarian: req.session.librarian });
     });
 });
 
 app.get('/students/add', isLoggedIn, (req, res) => {
-    res.render('addStudent', { error: null });
+    res.render('addStudent', { error: null, librarian: req.session.librarian });
 });
 
 app.post('/students/add', isLoggedIn, (req, res) => {
@@ -161,7 +161,7 @@ app.post('/students/add', isLoggedIn, (req, res) => {
             if (!err) {
                 res.redirect('/students');
             } else {
-                res.render('addStudent', { error: 'USN already exists or invalid data.' });
+                res.render('addStudent', { error: 'USN already exists or invalid data.', librarian: req.session.librarian });
             }
         }
     );
@@ -170,7 +170,7 @@ app.post('/students/add', isLoggedIn, (req, res) => {
 app.get('/students/edit/:usn', isLoggedIn, (req, res) => {
     db.get(`SELECT * FROM Students WHERE usn=?`, [req.params.usn], (err, student) => {
         if (!student) return res.redirect('/students');
-        res.render('editStudent', { student, error: null });
+        res.render('editStudent', { student, error: null, librarian: req.session.librarian });
     });
 });
 
@@ -184,7 +184,7 @@ app.post('/students/edit/:usn', isLoggedIn, (req, res) => {
                 res.redirect('/students');
             } else {
                 db.get(`SELECT * FROM Students WHERE usn=?`, [req.params.usn], (err2, student) => {
-                    res.render('editStudent', { student, error: 'Update failed.' });
+                    res.render('editStudent', { student, error: 'Update failed.', librarian: req.session.librarian });
                 });
             }
         }
@@ -211,7 +211,8 @@ app.get('/borrowed', isLoggedIn, (req, res) => {
                 res.render('borrowed', {
                     records: rows || [],
                     students: students || [],
-                    books: books || []
+                    books: books || [],
+                    librarian: req.session.librarian
                 });
             });
         });
@@ -253,7 +254,7 @@ app.get('/visits', isLoggedIn, (req, res) => {
         ORDER BY lv.id DESC
     `, (err, rows) => {
         db.all(`SELECT * FROM Students`, (err2, students) => {
-            res.render('visits', { visits: rows || [], students: students || [] });
+            res.render('visits', { visits: rows || [], students: students || [], librarian: req.session.librarian });
         });
     });
 });
