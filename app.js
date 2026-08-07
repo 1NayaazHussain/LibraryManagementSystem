@@ -288,6 +288,11 @@ app.post('/visits/exit/:id', isLoggedIn, (req, res) => {
     });
 });
 
+// ─── 404 Handler ──────────────────────────────────────────────────────────────
+app.use((req, res) => {
+    res.status(404).render('404');
+});
+
 // ─── Start Server ─────────────────────────────────────────────────────────────
 app.listen(5000, () => {
     console.log('🚀 Library Management System running at http://localhost:5000');
