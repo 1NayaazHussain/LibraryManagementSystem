@@ -82,7 +82,8 @@
                         </td>
                         <td><%= rec.book_title || 'Unknown Book' %></td>
                         <td style="font-size:13px; color:var(--text-secondary);"><%= rec.borrowed_date %></td>
-                        <td style="font-size:13px; <%= rec.is_overdue ? 'color:#fb7185;' : 'color:var(--text-secondary);' %>">
+                        <% var dueDateColor = rec.is_overdue ? '#fb7185' : 'var(--text-secondary)'; %>
+                        <td style="font-size:13px; color:<%= dueDateColor %>;">
                             <%= rec.return_date %>
                             <% if (rec.is_overdue) { %><span style="font-size:10px; display:block; color:#fb7185;">⚠️ Overdue</span><% } %>
                         </td>

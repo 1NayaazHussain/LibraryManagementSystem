@@ -17,39 +17,44 @@
             <div class="stat-card">
                 <div class="stat-icon purple">📚</div>
                 <div>
-                    <div class="stat-value" id="count-books">0</div>
+                    <div class="stat-value" id="count-books" data-target="<%= totalBooks %>">0</div>
                     <div class="stat-label">Total Books</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon teal">🎓</div>
                 <div>
-                    <div class="stat-value" id="count-students">0</div>
+                    <div class="stat-value" id="count-students" data-target="<%= totalStudents %>">0</div>
                     <div class="stat-label">Total Students</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon amber">🔄</div>
                 <div>
-                    <div class="stat-value" id="count-borrowed">0</div>
+                    <div class="stat-value" id="count-borrowed" data-target="<%= totalBorrowed %>">0</div>
                     <div class="stat-label">Books Borrowed</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon emerald">🚪</div>
                 <div>
-                    <div class="stat-value" id="count-visits">0</div>
+                    <div class="stat-value" id="count-visits" data-target="<%= totalVisits %>">0</div>
                     <div class="stat-label">Library Visits</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon rose">⚠️</div>
                 <div>
-                    <div class="stat-value" id="count-overdue" style="color: #fb7185;">0</div>
+                    <div class="stat-value" id="count-overdue" data-target="<%= overdue %>" style="color: #fb7185;">0</div>
                     <div class="stat-label">Overdue Books</div>
                 </div>
             </div>
         </div>
+        <!-- Chart data passed safely via data attributes -->
+        <div id="chart-data"
+             data-genre="<%- genreStats %>"
+             data-borrow="<%- borrowStats %>"
+             style="display:none;"></div>
 
         <!-- Charts -->
         <div class="charts-grid">
@@ -82,17 +87,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Animated counters
-    const targets = {
-        'count-books':    <%= totalBooks %>,
-        'count-students': <%= totalStudents %>,
-        'count-borrowed': <%= totalBorrowed %>,
-        'count-visits':   <%= totalVisits %>,
-        'count-overdue':  <%= overdue %>
-    };
-
-    Object.entries(targets).forEach(([id, target]) => {
-        const el = document.getElementById(id);
+    // Animated counters — read targets from data-* attributes (no EJS inside JS)
+    document.querySelectorAll('.stat-value[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target, 10) || 0;
         let current = 0;
         const step = Math.max(1, Math.ceil(target / 40));
         const interval = setInterval(() => {
@@ -102,8 +99,9 @@
         }, 30);
     });
 
-    // Genre Chart (Doughnut)
-    const genreData = <%- genreStats %>;
+    // Chart data — read from hidden element's data attributes
+    const chartEl = document.getElementById('chart-data');
+    const genreData = JSON.parse(chartEl.dataset.genre || '[]');
     const genreCtx = document.getElementById('genreChart').getContext('2d');
     new Chart(genreCtx, {
         type: 'doughnut',
@@ -130,7 +128,7 @@
 
     // Borrow Bar Chart
     const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const borrowData = <%- borrowStats %>;
+    const borrowData = JSON.parse(chartEl.dataset.borrow || '[]');
     const borrowCtx = document.getElementById('borrowChart').getContext('2d');
     new Chart(borrowCtx, {
         type: 'bar',
