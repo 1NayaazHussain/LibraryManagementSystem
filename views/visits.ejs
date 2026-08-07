@@ -1,0 +1,106 @@
+<%- include('partials/head', { pageTitle: 'Visit Log' }) %>
+<body>
+<div class="app-layout">
+    <%- include('partials/sidebar', { activePage: 'visits' }) %>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">🚪 Library Visit Log</h1>
+                <p class="page-subtitle">Track student entry and exit times</p>
+            </div>
+        </div>
+
+        <!-- Log Entry Panel -->
+        <div class="issue-panel">
+            <h3>📥 Log Student Entry</h3>
+            <form action="/visits/entry" method="post" id="entry-form">
+                <div style="display: flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+                    <div class="form-group" style="margin:0; min-width:280px; flex:1;">
+                        <label for="visit-student">Select Student</label>
+                        <select id="visit-student" name="usn" required>
+                            <option value="">Choose a student…</option>
+                            <% students.forEach(s => { %>
+                                <option value="<%= s.usn %>"><%= s.name %> — <%= s.usn %> (<%= s.branch %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="visibility:hidden; display:block; margin-bottom:6px;">.</label>
+                        <button type="submit" class="btn btn-primary" id="entry-btn">📥 Log Entry</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Visits Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <span class="table-title">Visit Records</span>
+                <span class="table-count"><%= visits.length %> visit<%= visits.length !== 1 ? 's' : '' %></span>
+            </div>
+
+            <% if (visits.length === 0) { %>
+                <div class="empty-state">
+                    <div class="empty-icon">🚪</div>
+                    <p>No visit records yet. Log a student entry above.</p>
+                </div>
+            <% } else { %>
+            <table id="visits-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>USN</th>
+                        <th>Student Name</th>
+                        <th>Entry Time</th>
+                        <th>Exit Time</th>
+                        <th>Duration</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% visits.forEach((visit, i) => { %>
+                    <tr>
+                        <td style="color:var(--text-muted); font-size:12px;"><%= i + 1 %></td>
+                        <td style="font-family:monospace; font-size:12px; color:var(--accent-light);"><%= visit.usn %></td>
+                        <td><strong><%= visit.student_name || visit.usn %></strong></td>
+                        <td style="font-size:13px; color:var(--text-secondary);"><%= visit.entry_time %></td>
+                        <td style="font-size:13px; color:var(--text-secondary);">
+                            <%= visit.exit_time || '—' %>
+                        </td>
+                        <td>
+                            <% if (visit.duration) { %>
+                                <span class="badge badge-teal">⏱️ <%= visit.duration %></span>
+                            <% } else if (!visit.exit_time) { %>
+                                <span class="badge badge-emerald">🟢 Active</span>
+                            <% } else { %>
+                                <span style="color:var(--text-muted); font-size:12px;">—</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (!visit.exit_time) { %>
+                                <form action="/visits/exit/<%= visit.id %>" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-ghost btn-sm" id="exit-btn-<%= visit.id %>">
+                                        📤 Log Exit
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <span style="font-size:12px; color:var(--text-muted);">Completed</span>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+    </main>
+</div>
+<script>
+    document.getElementById('entry-form').addEventListener('submit', () => {
+        const btn = document.getElementById('entry-btn');
+        btn.textContent = 'Logging...'; btn.disabled = true;
+    });
+</script>
+</body>
+</html>

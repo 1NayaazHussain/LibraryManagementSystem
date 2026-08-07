@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# SQLite databases (regenerated on startup via seed data)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.local
+
+# VS Code
+.vscode/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

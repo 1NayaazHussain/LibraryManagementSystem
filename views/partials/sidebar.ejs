@@ -1,0 +1,43 @@
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">📚</div>
+        <div class="brand-text">
+            LibraryMS
+            <span>NMAMIT</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <a href="/dashboard" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+            <span class="nav-icon">📊</span> Dashboard
+        </a>
+
+        <div class="nav-section-label">Library</div>
+        <a href="/books" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'books' ? 'active' : '' %>">
+            <span class="nav-icon">📖</span> Books
+        </a>
+        <a href="/students" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'students' ? 'active' : '' %>">
+            <span class="nav-icon">🎓</span> Students
+        </a>
+        <a href="/borrowed" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'borrowed' ? 'active' : '' %>">
+            <span class="nav-icon">🔄</span> Borrowed Books
+        </a>
+        <a href="/visits" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'visits' ? 'active' : '' %>">
+            <span class="nav-icon">🚪</span> Visit Log
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="librarian-info">
+            <div class="librarian-avatar"><%= librarian.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="librarian-name"><%= librarian.name.split(' ')[0] %></div>
+                <div class="librarian-role">Librarian</div>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-ghost" style="width:100%; justify-content:center; font-size:13px;">
+            🚪 Logout
+        </a>
+    </div>
+</div>

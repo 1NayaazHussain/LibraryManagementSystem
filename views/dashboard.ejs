@@ -1,0 +1,160 @@
+<%- include('partials/head', { pageTitle: 'Dashboard' }) %>
+<body>
+<div class="app-layout">
+    <%- include('partials/sidebar', { activePage: 'dashboard' }) %>
+
+    <main class="main-content">
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Welcome back, <%= librarian.name.split(' ')[0] %>! 👋</h2>
+                <p>Here's what's happening in the library today.</p>
+            </div>
+            <div class="welcome-emoji">📚</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple">📚</div>
+                <div>
+                    <div class="stat-value" id="count-books">0</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon teal">🎓</div>
+                <div>
+                    <div class="stat-value" id="count-students">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">🔄</div>
+                <div>
+                    <div class="stat-value" id="count-borrowed">0</div>
+                    <div class="stat-label">Books Borrowed</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon emerald">🚪</div>
+                <div>
+                    <div class="stat-value" id="count-visits">0</div>
+                    <div class="stat-label">Library Visits</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon rose">⚠️</div>
+                <div>
+                    <div class="stat-value" id="count-overdue" style="color: #fb7185;">0</div>
+                    <div class="stat-label">Overdue Books</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">📊 Books by Genre</div>
+                <div class="chart-container">
+                    <canvas id="genreChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">📈 Monthly Borrowing Activity</div>
+                <div class="chart-container">
+                    <canvas id="borrowChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="table-card" style="padding: 24px;">
+            <h3 style="font-size:15px; font-weight:600; margin-bottom:16px; color: var(--text-secondary);">⚡ Quick Actions</h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="/books/add" class="btn btn-primary">➕ Add Book</a>
+                <a href="/students/add" class="btn btn-ghost">🎓 Add Student</a>
+                <a href="/borrowed" class="btn btn-ghost">🔄 Issue Book</a>
+                <a href="/visits" class="btn btn-ghost">🚪 Log Visit</a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Animated counters
+    const targets = {
+        'count-books':    <%= totalBooks %>,
+        'count-students': <%= totalStudents %>,
+        'count-borrowed': <%= totalBorrowed %>,
+        'count-visits':   <%= totalVisits %>,
+        'count-overdue':  <%= overdue %>
+    };
+
+    Object.entries(targets).forEach(([id, target]) => {
+        const el = document.getElementById(id);
+        let current = 0;
+        const step = Math.max(1, Math.ceil(target / 40));
+        const interval = setInterval(() => {
+            current = Math.min(current + step, target);
+            el.textContent = current;
+            if (current >= target) clearInterval(interval);
+        }, 30);
+    });
+
+    // Genre Chart (Doughnut)
+    const genreData = <%- genreStats %>;
+    const genreCtx = document.getElementById('genreChart').getContext('2d');
+    new Chart(genreCtx, {
+        type: 'doughnut',
+        data: {
+            labels: genreData.map(g => g.genre || 'Unknown'),
+            datasets: [{
+                data: genreData.map(g => g.count),
+                backgroundColor: ['#8b5cf6','#14b8a6','#f59e0b','#f43f5e','#10b981','#3b82f6'],
+                borderColor: 'transparent',
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 }, padding: 12, boxWidth: 12 }
+                }
+            }
+        }
+    });
+
+    // Borrow Bar Chart
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const borrowData = <%- borrowStats %>;
+    const borrowCtx = document.getElementById('borrowChart').getContext('2d');
+    new Chart(borrowCtx, {
+        type: 'bar',
+        data: {
+            labels: borrowData.map(b => monthNames[parseInt(b.month) - 1] || b.month),
+            datasets: [{
+                label: 'Books Borrowed',
+                data: borrowData.map(b => b.count),
+                backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                borderColor: '#8b5cf6',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#64748b', font: { family: 'Inter' } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                y: { ticks: { color: '#64748b', font: { family: 'Inter' } }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+            }
+        }
+    });
+</script>
+</body>
+</html>

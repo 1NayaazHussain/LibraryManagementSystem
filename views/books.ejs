@@ -1,0 +1,87 @@
+<%- include('partials/head', { pageTitle: 'Books' }) %>
+<body>
+<div class="app-layout">
+    <%- include('partials/sidebar', { activePage: 'books' }) %>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">📖 Books</h1>
+                <p class="page-subtitle">Manage your library book collection</p>
+            </div>
+            <a href="/books/add" class="btn btn-primary" id="add-book-btn">➕ Add New Book</a>
+        </div>
+
+        <!-- Search Bar -->
+        <form class="search-bar" method="GET" action="/books" id="search-form">
+            <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="search" id="search-input" placeholder="Search by title, author, or genre…" value="<%= search %>">
+            </div>
+            <button type="submit" class="btn btn-ghost">Search</button>
+            <% if (search) { %>
+                <a href="/books" class="btn btn-ghost">✕ Clear</a>
+            <% } %>
+        </form>
+
+        <!-- Books Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <span class="table-title">All Books</span>
+                <span class="table-count"><%= books.length %> book<%= books.length !== 1 ? 's' : '' %></span>
+            </div>
+
+            <% if (books.length === 0) { %>
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p><% if (search) { %>No books match "<%= search %>"<% } else { %>No books found. Add your first book!<% } %></p>
+                </div>
+            <% } else { %>
+            <table id="books-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>ISBN</th>
+                        <th>Qty</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% books.forEach((book, i) => { %>
+                    <tr>
+                        <td style="color: var(--text-muted); font-size:12px;"><%= i + 1 %></td>
+                        <td><strong><%= book.title %></strong></td>
+                        <td><%= book.author %></td>
+                        <td>
+                            <% if (book.genre) { %>
+                                <span class="badge badge-purple"><%= book.genre %></span>
+                            <% } else { %><span style="color:var(--text-muted)">—</span><% } %>
+                        </td>
+                        <td style="font-size:12px; color: var(--text-muted);"><%= book.isbn || '—' %></td>
+                        <td>
+                            <span class="badge <%= book.quantity > 0 ? 'badge-emerald' : 'badge-rose' %>">
+                                <%= book.quantity %>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="/books/edit/<%= book.id %>" class="btn btn-ghost btn-sm">✏️ Edit</a>
+                                <a href="/books/delete/<%= book.id %>" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Delete \'<%= book.title %>\'? This cannot be undone.')">
+                                    🗑️ Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+            <% } %>
+        </div>
+    </main>
+</div>
+</body>
+</html>

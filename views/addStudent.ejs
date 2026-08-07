@@ -1,0 +1,73 @@
+<%- include('partials/head', { pageTitle: 'Add Student' }) %>
+<body>
+<div class="app-layout">
+    <%- include('partials/sidebar', { activePage: 'students' }) %>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">➕ Add Student</h1>
+                <p class="page-subtitle">Register a new student for library access</p>
+            </div>
+            <a href="/students" class="btn btn-ghost">← Back to Students</a>
+        </div>
+
+        <div class="form-card">
+            <h2>🎓 Student Details</h2>
+
+            <% if (error) { %>
+                <div class="error-msg">⚠️ <%= error %></div>
+            <% } %>
+
+            <form action="/students/add" method="post" id="add-student-form">
+                <div class="form-group">
+                    <label for="usn">USN (University Seat Number) *</label>
+                    <input type="text" id="usn" name="usn" placeholder="e.g. 1NM22CS001" required style="text-transform: uppercase;">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" placeholder="e.g. Arjun Sharma" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="branch">Branch *</label>
+                        <select id="branch" name="branch" required>
+                            <option value="">Select Branch</option>
+                            <option value="CSE">CSE — Computer Science</option>
+                            <option value="ISE">ISE — Information Science</option>
+                            <option value="ECE">ECE — Electronics & Comm.</option>
+                            <option value="ME">ME — Mechanical</option>
+                            <option value="CV">CV — Civil</option>
+                            <option value="EEE">EEE — Electrical</option>
+                            <option value="CH">CH — Chemical</option>
+                            <option value="BT">BT — Biotechnology</option>
+                            <option value="MBA">MBA</option>
+                            <option value="MCA">MCA</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="e.g. student@nmamit.in">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">➕ Register Student</button>
+                    <a href="/students" class="btn btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+<script>
+    document.getElementById('add-student-form').addEventListener('submit', () => {
+        const btn = document.getElementById('submit-btn');
+        btn.textContent = 'Registering...'; btn.disabled = true;
+    });
+    // Auto uppercase USN
+    document.getElementById('usn').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+</script>
+</body>
+</html>
