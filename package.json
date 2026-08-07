@@ -1,14 +1,16 @@
 {
-  "name": "librarymanagementsystem",
+  "name": "library-management-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Full-stack Library Management System for NMAMIT built with Express, EJS, and SQLite",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["library", "management", "express", "ejs", "sqlite", "nmamit"],
+  "author": "Nayaaz Hussain",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "ejs": "^6.0.1",
