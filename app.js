@@ -98,7 +98,7 @@ app.post('/books/add', isLoggedIn, (req, res) => {
         [title, author, genre, isbn, quantity],
         (err) => {
             if (!err) {
-                res.redirect('/books');
+                res.redirect('/books?msg=Book+added+successfully');
             } else {
                 res.render('addBook', { error: 'Failed to add book. Please try again.', librarian: req.session.librarian });
             }
@@ -120,7 +120,7 @@ app.post('/books/edit/:id', isLoggedIn, (req, res) => {
         [title, author, genre, isbn, quantity, req.params.id],
         (err) => {
             if (!err) {
-                res.redirect('/books');
+                res.redirect('/books?msg=Book+updated+successfully');
             } else {
                 db.get(`SELECT * FROM Books WHERE id=?`, [req.params.id], (err2, book) => {
                     res.render('editBook', { book, error: 'Update failed. Try again.', librarian: req.session.librarian });
@@ -132,7 +132,7 @@ app.post('/books/edit/:id', isLoggedIn, (req, res) => {
 
 app.get('/books/delete/:id', isLoggedIn, (req, res) => {
     db.run(`DELETE FROM Books WHERE id=?`, [req.params.id], (err) => {
-        res.redirect('/books');
+        res.redirect('/books?msg=Book+deleted&type=info');
     });
 });
 
@@ -159,7 +159,7 @@ app.post('/students/add', isLoggedIn, (req, res) => {
         [usn, name, branch, email],
         (err) => {
             if (!err) {
-                res.redirect('/students');
+                res.redirect('/students?msg=Student+added+successfully');
             } else {
                 res.render('addStudent', { error: 'USN already exists or invalid data.', librarian: req.session.librarian });
             }
@@ -181,7 +181,7 @@ app.post('/students/edit/:usn', isLoggedIn, (req, res) => {
         [name, branch, email, req.params.usn],
         (err) => {
             if (!err) {
-                res.redirect('/students');
+                res.redirect('/students?msg=Student+updated+successfully');
             } else {
                 db.get(`SELECT * FROM Students WHERE usn=?`, [req.params.usn], (err2, student) => {
                     res.render('editStudent', { student, error: 'Update failed.', librarian: req.session.librarian });
@@ -192,7 +192,7 @@ app.post('/students/edit/:usn', isLoggedIn, (req, res) => {
 });
 
 app.get('/students/delete/:usn', isLoggedIn, (req, res) => {
-    db.run(`DELETE FROM Students WHERE usn=?`, [req.params.usn], () => res.redirect('/students'));
+    db.run(`DELETE FROM Students WHERE usn=?`, [req.params.usn], () => res.redirect('/students?msg=Student+deleted&type=info'));
 });
 
 // ─── Borrowed Books Routes ────────────────────────────────────────────────────
