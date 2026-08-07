@@ -1,10 +1,16 @@
+/**
+ * Database Configuration & Schema
+ * ─────────────────────────────────
+ * Sets up SQLite database, creates tables if needed,
+ * runs safe migrations, and seeds initial data.
+ */
 const sqlite3 = require('sqlite3');
 
 const db = new sqlite3.Database('library.db', (err) => {
     if (err) {
-        console.log(err.message);
+        console.error('❌ Database connection failed:', err.message);
     } else {
-        console.log('Connected to database');
+        console.log('✅ Connected to SQLite database');
     }
 });
 
