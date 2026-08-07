@@ -218,6 +218,12 @@ select option { background: #1e1e2e; color: var(--text-primary); }
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: white;
     box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    background-size: 200% 200%;
+    animation: btnShimmer 4s ease-in-out infinite;
+}
+@keyframes btnShimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
 }
 .btn-primary:hover {
     transform: translateY(-1px);
