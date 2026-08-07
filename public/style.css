@@ -683,11 +683,27 @@ tbody td {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    position: relative;
+    overflow: hidden;
 }
 
-.welcome-text h2 { font-size: 20px; font-weight: 700; }
-.welcome-text p  { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
-.welcome-emoji   { font-size: 42px; }
+.welcome-banner::after {
+    content: '';
+    position: absolute;
+    top: 0; right: -100%;
+    width: 200%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.06), transparent);
+    animation: welcomeShine 6s ease-in-out infinite;
+}
+
+@keyframes welcomeShine {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(50%); }
+}
+
+.welcome-text h2 { font-size: 20px; font-weight: 700; position: relative; z-index: 1; }
+.welcome-text p  { font-size: 13px; color: var(--text-secondary); margin-top: 4px; position: relative; z-index: 1; }
+.welcome-emoji   { font-size: 42px; position: relative; z-index: 1; }
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
