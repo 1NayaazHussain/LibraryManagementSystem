@@ -179,7 +179,8 @@ textarea {
 input:focus, select:focus, textarea:focus {
     border-color: var(--accent);
     background: rgba(139, 92, 246, 0.08);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.08);
+    transform: translateY(-1px);
 }
 
 select option { background: #1e1e2e; color: var(--text-primary); }
