@@ -177,7 +177,7 @@ select,
 textarea {
     width: 100%;
     padding: 11px 16px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text-primary);
@@ -187,10 +187,24 @@ textarea {
     outline: none;
 }
 
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="date"]::placeholder,
+textarea::placeholder {
+    color: var(--text-muted);
+}
+
+input:hover, select:hover, textarea:hover {
+    border-color: rgba(139, 92, 246, 0.35);
+    background: rgba(255, 255, 255, 0.06);
+}
+
 input:focus, select:focus, textarea:focus {
     border-color: var(--accent);
-    background: rgba(139, 92, 246, 0.08);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.08);
+    background: rgba(139, 92, 246, 0.06);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), 0 0 20px rgba(139, 92, 246, 0.1);
     transform: translateY(-1px);
 }
 
