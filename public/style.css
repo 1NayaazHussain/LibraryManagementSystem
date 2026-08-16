@@ -315,6 +315,11 @@ select option { background: #1e1e2e; color: var(--text-primary); }
     font-size: 18px;
     flex-shrink: 0;
     animation: brandPulse 3s ease-in-out infinite;
+    transition: var(--transition);
+}
+
+.brand-icon:hover {
+    transform: rotate(6deg) scale(1.05);
 }
 
 @keyframes brandPulse {
@@ -370,12 +375,14 @@ select option { background: #1e1e2e; color: var(--text-primary); }
 .nav-link:hover {
     background: rgba(139, 92, 246, 0.1);
     color: var(--text-primary);
+    padding-left: 16px;
 }
 
 .nav-link.active {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(20, 184, 166, 0.1));
     color: var(--accent-light);
     border: 1px solid rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
 }
 
 .nav-link.active::before {
@@ -386,6 +393,7 @@ select option { background: #1e1e2e; color: var(--text-primary); }
     width: 3px; height: 20px;
     background: var(--accent);
     border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .sidebar-footer {
