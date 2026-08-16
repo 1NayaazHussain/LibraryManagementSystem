@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const db = require('./db');
 const session = require('express-session');
+const { formatDuration, validateBook, validateStudent, sanitize, todayIST, defaultReturnDate } = require('./utils');
 
 const app = express();
 
@@ -93,9 +94,13 @@ app.get('/books/add', isLoggedIn, (req, res) => {
 
 app.post('/books/add', isLoggedIn, (req, res) => {
     const { title, author, genre, isbn, quantity } = req.body;
+    const validationError = validateBook({ title, author, genre, isbn, quantity });
+    if (validationError) {
+        return res.render('addBook', { error: validationError, librarian: req.session.librarian });
+    }
     db.run(
         `INSERT INTO Books(title, author, genre, isbn, quantity) VALUES(?,?,?,?,?)`,
-        [title, author, genre, isbn, quantity],
+        [sanitize(title), sanitize(author), sanitize(genre), sanitize(isbn), parseInt(quantity, 10)],
         (err) => {
             if (!err) {
                 res.redirect('/books?msg=Book+added+successfully');
@@ -115,9 +120,15 @@ app.get('/books/edit/:id', isLoggedIn, (req, res) => {
 
 app.post('/books/edit/:id', isLoggedIn, (req, res) => {
     const { title, author, genre, isbn, quantity } = req.body;
+    const validationError = validateBook({ title, author, genre, isbn, quantity });
+    if (validationError) {
+        return db.get(`SELECT * FROM Books WHERE id=?`, [req.params.id], (err, book) => {
+            res.render('editBook', { book, error: validationError, librarian: req.session.librarian });
+        });
+    }
     db.run(
         `UPDATE Books SET title=?, author=?, genre=?, isbn=?, quantity=? WHERE id=?`,
-        [title, author, genre, isbn, quantity, req.params.id],
+        [sanitize(title), sanitize(author), sanitize(genre), sanitize(isbn), parseInt(quantity, 10), req.params.id],
         (err) => {
             if (!err) {
                 res.redirect('/books?msg=Book+updated+successfully');
@@ -154,9 +165,13 @@ app.get('/students/add', isLoggedIn, (req, res) => {
 
 app.post('/students/add', isLoggedIn, (req, res) => {
     const { usn, name, branch, email } = req.body;
+    const validationError = validateStudent({ usn, name, branch, email });
+    if (validationError) {
+        return res.render('addStudent', { error: validationError, librarian: req.session.librarian });
+    }
     db.run(
         `INSERT INTO Students(usn, name, branch, email) VALUES(?,?,?,?)`,
-        [usn, name, branch, email],
+        [sanitize(usn).toUpperCase(), sanitize(name), sanitize(branch), sanitize(email)],
         (err) => {
             if (!err) {
                 res.redirect('/students?msg=Student+added+successfully');
@@ -176,9 +191,15 @@ app.get('/students/edit/:usn', isLoggedIn, (req, res) => {
 
 app.post('/students/edit/:usn', isLoggedIn, (req, res) => {
     const { name, branch, email } = req.body;
+    const validationError = validateStudent({ usn: req.params.usn, name, branch, email });
+    if (validationError) {
+        return db.get(`SELECT * FROM Students WHERE usn=?`, [req.params.usn], (err, student) => {
+            res.render('editStudent', { student, error: validationError, librarian: req.session.librarian });
+        });
+    }
     db.run(
         `UPDATE Students SET name=?, branch=?, email=? WHERE usn=?`,
-        [name, branch, email, req.params.usn],
+        [sanitize(name), sanitize(branch), sanitize(email), req.params.usn],
         (err) => {
             if (!err) {
                 res.redirect('/students?msg=Student+updated+successfully');
@@ -221,7 +242,10 @@ app.get('/borrowed', isLoggedIn, (req, res) => {
 
 app.post('/borrowed/issue', isLoggedIn, (req, res) => {
     const { usn, book_id, return_date } = req.body;
-    const borrowed_date = new Date().toISOString().split('T')[0];
+    if (!usn || !book_id) {
+        return res.redirect('/borrowed?msg=Please+select+a+student+and+book&type=error');
+    }
+    const borrowed_date = todayIST();
     db.run(
         `INSERT INTO BorrowedBooks(usn, book_id, borrowed_date, return_date, status) VALUES(?,?,?,?,'borrowed')`,
         [usn, book_id, borrowed_date, return_date],
@@ -270,15 +294,10 @@ app.post('/visits/entry', isLoggedIn, (req, res) => {
 app.post('/visits/exit/:id', isLoggedIn, (req, res) => {
     db.get(`SELECT * FROM LibraryVisits WHERE id=?`, [req.params.id], (err, visit) => {
         if (visit && !visit.exit_time) {
-            const exit_time = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-            // Calculate duration
+            const now = new Date();
+            const exit_time = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
             const entry = new Date(visit.entry_time);
-            const exit = new Date();
-            const diffMs = exit - entry;
-            const diffMins = Math.round(diffMs / 60000);
-            const hours = Math.floor(diffMins / 60);
-            const mins = diffMins % 60;
-            const duration = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            const duration = formatDuration(now - entry);
             db.run(
                 `UPDATE LibraryVisits SET exit_time=?, duration=? WHERE id=?`,
                 [exit_time, duration, req.params.id]
