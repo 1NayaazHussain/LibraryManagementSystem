@@ -498,8 +498,9 @@ select option { background: #1e1e2e; color: var(--text-primary); }
     transition: var(--transition);
 }
 
-.stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.stat-card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--shadow-glow); }
 .stat-card:hover::before { opacity: 1; }
+.stat-card:hover .stat-icon { transform: scale(1.08); }
 
 .stat-icon {
     width: 52px; height: 52px;
@@ -509,6 +510,7 @@ select option { background: #1e1e2e; color: var(--text-primary); }
     justify-content: center;
     font-size: 24px;
     flex-shrink: 0;
+    transition: var(--transition);
 }
 
 .stat-icon.purple { background: rgba(139, 92, 246, 0.15); }
@@ -632,7 +634,10 @@ tbody tr:nth-child(9)  { animation-delay: 0.18s; }
 tbody tr:nth-child(10) { animation-delay: 0.20s; }
 
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover { background: rgba(139, 92, 246, 0.05); }
+tbody tr:hover {
+    background: rgba(139, 92, 246, 0.04);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
 
 tbody td {
     padding: 14px 16px;
