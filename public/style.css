@@ -105,6 +105,13 @@ a { color: inherit; text-decoration: none; }
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow), var(--shadow-glow);
     animation: fadeUp 0.5s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow), 0 0 50px rgba(139, 92, 246, 0.25);
+    border-color: rgba(139, 92, 246, 0.25);
 }
 
 @keyframes fadeUp {
@@ -127,6 +134,13 @@ a { color: inherit; text-decoration: none; }
     align-items: center;
     justify-content: center;
     font-size: 24px;
+    transition: var(--transition);
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.25);
+}
+
+.login-card:hover .logo-icon {
+    transform: scale(1.08) rotate(4deg);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
 .login-logo h1 {
